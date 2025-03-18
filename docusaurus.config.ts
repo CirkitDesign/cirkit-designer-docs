@@ -37,7 +37,7 @@ const config: Config = {
       {
         docs: {
           path: 'docs',
-          routeBasePath: '/',
+          routeBasePath: 'docs',
           sidebarPath: './sidebars.ts',
         },
         theme: {
