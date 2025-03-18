@@ -1,5 +1,5 @@
 ---
-id: intro
+id: index
 title: Welcome to Cirkit Designer
 slug: /
 sidebar_position: 1
