@@ -1,4 +1,7 @@
 ---
+id: intro
+title: Welcome to Cirkit Designer
+slug: /
 sidebar_position: 1
 ---
 
