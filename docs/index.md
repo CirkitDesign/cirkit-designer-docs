@@ -5,46 +5,33 @@ slug: /
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Welcome to Cirkit Designer!
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Cirkit Designer is an online platform for designing, simulating, and prototyping circuits. It supports microcontroller platforms including Arduino, ESP32, Raspberry Pi, IoT systems, and thousands of components contributed by our community.
 
-## Getting Started
+Here are some quick examples of simulatable circuits built with Cirkit Designer:
 
-Get started by **creating a new site**.
+- [Pong Game with Arduino UNO and OLED Display](https://app.cirkitdesigner.com/project/0c10f349-34b2-46f2-b428-2b4b8b41b003)
+- [Measure Temperature with DHT11 and print to 16x2 LCD Display](https://app.cirkitdesigner.com/project/3aa5bf2c-a799-4f99-9c3a-eea420b89244)
+- [Track Time with DS1307 RTC and print to LCD Display](https://app.cirkitdesigner.com/project/374e7696-5d6d-457d-8235-8ab1581fb324)
+- [Play a melody to Piezo Buzzer](https://app.cirkitdesigner.com/project/f8a25630-e336-4ebe-92e0-2bf0aaf57f54)
+- [Stepper Motor + A4988 Half Stepping](https://app.cirkitdesigner.com/project/0b502b5d-47f7-4067-bc6d-4ff8794a2ded)
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+## Why Cirkit Designer?
 
-### What you'll need
+- **Faster Prototyping with AI:** Use intelligent suggestions for wiring, coding, and debugging your circuits, drastically reducing your design time.
+- **Real-Time Circuit Testing:** Quickly build and test circuits in a real-time simulation environment, allowing for rapid iteration and immediate feedback.
+- **Safe Experimentation:** Mistakes won't damage virtual components, so you can explore and test confidently without risks.
+- **Easy Collaboration:** Share your circuit with a simple link to get instant feedback or assistance from the community.
+- **Unlimited Components:** Access and use as many virtual parts as needed without concern for availability or cost.
 
-- [Node.js](https://nodejs.org/en/download/) version 18.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+## Unique Features
 
-## Generate a new site
+- **AI-Powered Design Tools:** Enhance your workflow with automated suggestions for optimal circuit design and debugging.
+- [**Custom Parts Creator**](./custom-simulation-parts/getting-started): Easily create your own simulation components and share them with the community.
+- **Extensive Component Library:** Over 30,000 community-contributed components available for immediate use.
+- **Integrated Arduino IDE:** Write, compile, and debug Arduino code directly within Cirkit Designer, powered by VS Code.
 
-Generate a new Docusaurus site using the **classic template**.
+## Community
 
-The classic template will automatically be added to your project after you run the command:
-
-```bash
-npm init docusaurus@latest my-website classic
-```
-
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
-
-```bash
-cd my-website
-npm run start
-```
-
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+Join our [Discord community](https://discord.gg/2R2DY37VpE) to share your projects, seek assistance, suggest features, and connect with other circuit enthusiasts.

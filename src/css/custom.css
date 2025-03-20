@@ -28,3 +28,26 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+.navbar__title {
+  font-size: 26px;
+  color: gray !important;
+  margin-left: 5px;
+  font-family: 'Roboto', sans-serif !important;
+  font-weight: 500;
+}
+
+/* Dark mode styles for the navbar title */
+[data-theme='dark'] .navbar__title {
+  color: white !important;
+}
+
+.markdown img {
+  max-width: 100% !important;
+  width: auto !important;  /* Prevents horizontal stretching */
+  max-height: 400px !important;
+  height: auto !important; /* Maintains aspect ratio */
+  border-radius: 10px !important;
+  display: block; /* Ensures proper scaling */
+  margin: 0 auto; /* Centers the image */
+}

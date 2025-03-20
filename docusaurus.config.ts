@@ -5,9 +5,9 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'My Site',
+  title: 'Cirkit Designer Docs',
   tagline: 'Dinosaurs are cool',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/favicon/favicon.ico',
 
   // Set the production url of your site here
   url: 'https://learn.cirkitdesigner.com',
@@ -17,8 +17,8 @@ const config: Config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'Cirkit Design LLC', // Usually your GitHub org/user name.
+  projectName: 'Cirkit Designer', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -51,21 +51,20 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'My Site',
+      title: 'Cirkit Designer | Docs',
       logo: {
-        alt: 'My Site Logo',
-        src: 'img/logo.svg',
+        alt: 'Cirkit Designer Logo',
+        src: 'img/logo/512x512.png',
       },
       items: [
         {
-          type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
-          position: 'left',
-          label: 'Tutorial',
+          href: 'https://www.cirkitdesigner.com',
+          label: 'Home',
+          position: 'right',
         },
         {
-          href: 'https://github.com/facebook/docusaurus',
-          label: 'GitHub',
+          href: 'https://app.cirkitdesigner.com',
+          label: 'Cirkit Designer IDE',
           position: 'right',
         },
       ],
@@ -77,8 +76,12 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'Tutorial',
+              label: 'Welcome',
               to: '/',
+            },
+            {
+              label: 'Custom Simulation Components',
+              to: '/custom-simulation-parts/getting-started',
             },
           ],
         },
@@ -86,30 +89,30 @@ const config: Config = {
           title: 'Community',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
-            {
               label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'X',
-              href: 'https://x.com/docusaurus',
-            },
+              href: 'https://discord.gg/2R2DY37VpE',
+            }
           ],
         },
         {
           title: 'More',
           items: [
             {
-              label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              label: 'Home',
+              href: 'https://www.cirkitdesigner.com',
+            },
+            {
+              label: 'Cirkit Designer IDE',
+              href: 'https://app.cirkitdesigner.com',
+            },
+            {
+              label: 'Components and Projects Library',
+              href: 'https://docs.cirkitdesigner.com',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Cirkit Design LLC.`,
     },
     prism: {
       theme: prismThemes.github,
