@@ -13,15 +13,15 @@ Let's walk through exactly how this process works, step by step.
 
 ---
 
-## Step 1: Define the Framebuffer in Simulation State JSON
+## Step 1: Define the Framebuffer in Runtime State JSON
 
-First, define your framebuffer in the component’s simulation state JSON. This specifies the dimensions (`width`, `height`) and sets its type to `"display"`:
+First, define your framebuffer in the component’s runtime state JSON file. This specifies the dimensions (`width`, `height`) and sets its type to `"display"`:
 
-**Example (`Simulation State (json)`):**
+**Example (`Runtime State (json)`):**
 
 ```json
 {
-  "stateVariables": [
+  "runtimeStateVariables": [
     {
       "id": "display",
       "type": "display",
@@ -64,7 +64,7 @@ export class SimulationComponentLogic extends AbstractSimulationComponentLogic {
   frameBuffer: IFrameBuffer;
 
   public init(): void {
-    this.frameBuffer = this.simulationState.getFrameBuffer('display');
+    this.frameBuffer = this.simulation.runtimeState.getFrameBuffer('display');
     this.clearDisplay();
     this.drawInitialPixels();
   }
@@ -98,7 +98,7 @@ export class SimulationComponentUI extends AbstractSimulationComponentUI {
   framebuffer: IFrameBuffer;
 
   init() {
-    this.framebuffer = this.simulationState.getFrameBuffer('display');
+    this.framebuffer = this.simulation.runtimeState.getFrameBuffer('display');
   }
 }
 ```
@@ -117,10 +117,10 @@ LCD displays often require manually reading the framebuffer data and rendering i
 
 ```html
 <!-- Minimal LCD template with small squares representing each pixel -->
-<div *ngFor="let y of createRange(framebuffer.getHeight())" style="display: flex;">
+<div *ngFor="let y of component.createRange(component.framebuffer.getHeight())" style="display: flex;">
   <div
-    *ngFor="let x of createRange(framebuffer.getWidth())"
-    [style.background]="isPixelOn(x, y) ? 'black' : 'white'"
+    *ngFor="let x of component.createRange(component.framebuffer.getWidth())"
+    [style.background]="component.isPixelOn(x, y) ? 'black' : 'white'"
     style="width: 4px; height: 4px; margin: 1px;"
   ></div>
 </div>
@@ -133,7 +133,7 @@ export class SimulationComponentUI extends AbstractSimulationComponentUI {
 
   init() {
     // Obtain a reference to the LCD's framebuffer
-    this.framebuffer = this.simulationState.getFrameBuffer('lcdDisplay');
+    this.framebuffer = this.simulation.runtimeState.getFrameBuffer('lcdDisplay');
   }
 
   // Simple function to return a numeric array for *ngFor
@@ -170,7 +170,7 @@ You can adapt this approach with more sophisticated logic, or use a `<canvas>` i
 
 ## Quick Recap:
 
-1. Define your framebuffer dimensions in JSON state.
+1. Define your framebuffer dimensions in JSON runtime state.
 2. Set pixel data dynamically in simulation logic.
 3. Visually render pixels in the UI (OLED automatically, LCD manually).
 

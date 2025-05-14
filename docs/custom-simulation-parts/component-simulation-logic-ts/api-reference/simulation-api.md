@@ -4,15 +4,15 @@ sidebar_position: 1
 
 # Simulation API
 
-The `SimulationAPI` provides methods to interact with the simulation environment directly from your component's core simulation logic. Accessible within your `SimulationComponentLogic` class, it offers streamlined access to simulation features through dedicated utilities.
+The `Simulation API` provides methods to interact with the simulation environment directly from your component's core simulation logic. Accessible within your `SimulationComponentLogic` class, it offers streamlined access to simulation features through dedicated utilities.
 
 ```typescript
-this.simulationAPI.methodName();
+this.simulation.api.methodName();
 ```
 
 ## Available Utilities
 
-### [Pin API (`pin`)](./pin-api)
+### [Pin API (`pin`)](./simulation-api-utilities/pin-api)
 
 Manage component pins for analog and digital signals.
 
@@ -34,13 +34,13 @@ Manage component pins for analog and digital signals.
 
 **Example:**
 ```typescript
-const pin = this.simulationAPI.pin.createDigitalOutputPin('LED', 5, DigitalVoltageLevelEnum.LOW);
-this.simulationAPI.pin.writeDigital(pin, DigitalVoltageLevelEnum.HIGH);
+const pin = this.simulation.api.pin.createDigitalOutputPin('LED', 5, DigitalVoltageLevelEnum.LOW);
+this.simulation.api.pin.writeDigital(pin, DigitalVoltageLevelEnum.HIGH);
 ```
 
 ---
 
-### [Timer API (`timer`)](./timer-api)
+### [Timer API (`timer`)](./simulation-api-utilities/timer-api)
 
 Schedule and manage timed simulation events.
 
@@ -53,13 +53,13 @@ Schedule and manage timed simulation events.
 
 **Example:**
 ```typescript
-const timer = this.simulationAPI.timer.createTimer(this.onTimeout);
-this.simulationAPI.timer.startTimer(timer, 500000, true); // Every 500ms
+const timer = this.simulation.api.timer.createTimer(this.onTimeout);
+this.simulation.api.timer.startTimer(timer, 500000, true); // Every 500ms
 ```
 
 ---
 
-### [Connection API (`connection`)](./connection-api)
+### [Connection API (`connection`)](./simulation-api-utilities/connection-api)
 
 Manage dynamic connections between simulation components.
 
@@ -75,13 +75,13 @@ Manage dynamic connections between simulation components.
 
 **Example:**
 ```typescript
-const wire = this.simulationAPI.connection.addWire(pinA, pinB);
-this.simulationAPI.connection.removeWire(wire);
+const wire = this.simulation.api.connection.addWire(pinA, pinB);
+this.simulation.api.connection.removeWire(wire);
 ```
 
 ---
 
-### [I2C API (`i2c`)](./i2c-api)
+### [I2C API (`i2c`)](./simulation-api-utilities/i2c-api)
 
 Handle I2C communication between components.
 
@@ -92,7 +92,7 @@ Handle I2C communication between components.
 
 **Example:**
 ```typescript
-this.simulationAPI.i2c.createI2CSlave(0x40, sclPin, sdaPin, {
+this.simulation.api.i2c.createI2CSlave(0x40, sclPin, sdaPin, {
   connect: () => true,
   writeByte: (data) => { /* handle data */ return true; },
   readByte: () => 0x00
@@ -101,7 +101,7 @@ this.simulationAPI.i2c.createI2CSlave(0x40, sclPin, sdaPin, {
 
 ---
 
-### [SPI API (`spi`)](./spi-api)
+### [SPI API (`spi`)](./simulation-api-utilities/spi-api)
 
 Facilitate SPI communication.
 
@@ -115,13 +115,13 @@ Facilitate SPI communication.
 
 **Example:**
 ```typescript
-this.simulationAPI.spi.createSPIMaster(sckPin, mosiPin, misoPin, 0);
-const receivedByte = this.simulationAPI.spi.spiMasterTransfer(0x9F);
+this.simulation.api.spi.createSPIMaster(sckPin, mosiPin, misoPin, 0);
+const receivedByte = this.simulation.api.spi.spiMasterTransfer(0x9F);
 ```
 
 ---
 
-### [Audio API (`audio`)](./audio-api)
+### [Audio API (`audio`)](./simulation-api-utilities/audio-api)
 
 Manage audio-related interactions in the simulation.
 
@@ -132,7 +132,7 @@ Manage audio-related interactions in the simulation.
 
 **Example:**
 ```typescript
-this.simulationAPI.audio.sendAudioFrequencyUpdate(440);
+this.simulation.api.audio.sendAudioFrequencyUpdate(440);
 ```
 
 ---
@@ -149,18 +149,18 @@ export class SimulationComponentLogic extends AbstractSimulationComponentLogic {
   private blinkTimer: ITimer;
 
   public init(): void {
-    this.ledPin = this.simulationAPI.pin.createDigitalOutputPin('LED', 5, DigitalVoltageLevelEnum.LOW);
+    this.ledPin = this.simulation.api.pin.createDigitalOutputPin('LED', 5, DigitalVoltageLevelEnum.LOW);
 
-    this.blinkTimer = this.simulationAPI.timer.createTimer(this.toggleLED);
-    this.simulationAPI.timer.startTimer(this.blinkTimer, 500000, true); // Blink every 500ms
+    this.blinkTimer = this.simulation.api.timer.createTimer(this.toggleLED);
+    this.simulation.api.timer.startTimer(this.blinkTimer, 500000, true); // Blink every 500ms
   }
 
   private toggleLED = (): void => {
-    const currentLevel = this.simulationAPI.pin.readDigital(this.ledPin);
+    const currentLevel = this.simulation.api.pin.readDigital(this.ledPin);
     const newLevel = currentLevel === DigitalVoltageLevelEnum.HIGH ? DigitalVoltageLevelEnum.LOW : DigitalVoltageLevelEnum.HIGH;
-    this.simulationAPI.pin.writeDigital(this.ledPin, newLevel);
+    this.simulation.api.pin.writeDigital(this.ledPin, newLevel);
 
-    this.simulationAPI.audio.sendAudioFrequencyUpdate(newLevel === DigitalVoltageLevelEnum.HIGH ? 440 : 0);
+    this.simulation.api.audio.sendAudioFrequencyUpdate(newLevel === DigitalVoltageLevelEnum.HIGH ? 440 : 0);
   };
 }
 ```

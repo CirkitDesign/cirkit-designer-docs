@@ -2,12 +2,12 @@
 sidebar_position: 2
 ---
 
-# Simulation State
+# Runtime State
 
-The **Simulation State Manager** allows you to manage and synchronize state variables between the UI (HTML and TypeScript) and the core simulation logic. These simulation variables are defined in the **Component Simulation State JSON file** and are accessible from the UI TypeScript class (`SimulationComponentUI`) through:
+The **Runtime State Manager** allows you to manage and synchronize state variables between the UI (HTML and TypeScript) and the core simulation logic. These simulation variables are defined in the **Component Runtime State JSON file** and are accessible from the UI TypeScript class (`SimulationComponentUI`) through:
 
 ```typescript
-this.simulationState.methodName();
+this.simulation.runtimeState.methodName();
 ```
 
 ---
@@ -62,15 +62,15 @@ this.simulationState.methodName();
 
 ```typescript
 // Updating a boolean state variable
-this.simulationState.updateBooleanState('isLEDOn', true);
+this.simulation.runtimeState.updateBooleanState('isLEDOn', true);
 
 // Retrieving an integer state variable
-const temp = this.simulationState.getIntegerState('temperature');
+const temp = this.simulation.runtimeState.getIntegerState('temperature');
 
 // Subscribing to state variable changes
-this.simulationState.subscribeToIntegerStateUpdates('temperature', (newTemp) => {
+this.simulation.runtimeState.subscribeToIntegerStateUpdates('temperature', (newTemp) => {
   console.log(`Temperature updated to ${newTemp}`);
 });
 ```
 
-The **Simulation State Manager** ensures seamless state synchronization, enabling dynamic and interactive simulation components.
+The **Runtime State Manager** ensures seamless state synchronization, enabling dynamic and interactive simulation components.

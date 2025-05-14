@@ -1,5 +1,5 @@
 ---
-sidebar_position: 3
+sidebar_position: 1
 ---
 
 # Pin API
@@ -53,7 +53,7 @@ Creates a passive input pin.
 - **`pinName`** *(string)*: Unique name for the pin.
 
 ```typescript
-const inputPin = this.simulationAPI.pin.createInputPin(/* pinName= */ "DATA_IN");
+const inputPin = this.simulation.api.pin.createInputPin(/* pinName= */ "DATA_IN");
 ```
 
 #### `createInputPinWithPullUp(pinName: string, resistor?: number, pullVoltage?: number): IPin`
@@ -65,7 +65,7 @@ Creates an input pin with an internal pull-up resistor.
 - `pullVoltage` *(number, default: 5V)*: Voltage level to pull up to.
 
 ```typescript
-const pullUpPin = this.simulationAPI.pin.createInputPinWithPullUp(
+const pullUpPin = this.simulation.api.pin.createInputPinWithPullUp(
   /* pinName= */ "BTN", 
   /* resistor= */ 4700, 
   /* pullVoltage= */ 3.3
@@ -80,7 +80,7 @@ Creates an input pin with an internal pull-down resistor.
 - `resistor` *(number, default: 10000Ω)*: Resistor value.
 
 ```typescript
-const pullDownPin = this.simulationAPI.pin.createInputPinWithPullDown(
+const pullDownPin = this.simulation.api.pin.createInputPinWithPullDown(
   /* pinName= */ "BTN_DOWN"
 );
 ```
@@ -94,7 +94,7 @@ Creates a digital output pin.
 - `value` *(DigitalVoltageLevelEnum, default: LOW)*: Initial pin state.
 
 ```typescript
-const digitalOutPin = this.simulationAPI.pin.createDigitalOutputPin(
+const digitalOutPin = this.simulation.api.pin.createDigitalOutputPin(
   /* pinName= */ "LED_OUT", 
   /* highVoltage= */ 5, 
   /* value= */ DigitalVoltageLevelEnum.HIGH
@@ -109,7 +109,7 @@ Creates an analog output pin.
 - `voltage` *(number, default: 0V)*: Initial analog voltage.
 
 ```typescript
-const analogPin = this.simulationAPI.pin.createAnalogOutputPin(
+const analogPin = this.simulation.api.pin.createAnalogOutputPin(
   /* pinName= */ "DAC_OUT", 
   /* voltage= */ 2.5
 );
@@ -124,7 +124,7 @@ const analogPin = this.simulationAPI.pin.createAnalogOutputPin(
 Reads the current analog voltage from a pin.
 
 ```typescript
-const analogVoltage = this.simulationAPI.pin.readAnalog(/* pin= */ inputPin);
+const analogVoltage = this.simulation.api.pin.readAnalog(/* pin= */ inputPin);
 ```
 
 #### `readDigital(pin: IPin, thresholdVoltage?: number): DigitalVoltageLevelEnum`
@@ -134,7 +134,7 @@ Reads a digital HIGH or LOW based on a voltage threshold.
 - `thresholdVoltage` *(number, default: 2.5V)*: Threshold voltage to differentiate HIGH from LOW.
 
 ```typescript
-const digitalValue = this.simulationAPI.pin.readDigital(
+const digitalValue = this.simulation.api.pin.readDigital(
     /* pin= */ inputPin,
     /* thresholdVoltage= */ 2.5);
 ```
@@ -146,7 +146,7 @@ Writes an analog voltage to an output pin.
 - `voltage` *(number)*: Voltage to output.
 
 ```typescript
-this.simulationAPI.pin.writeAnalog(
+this.simulation.api.pin.writeAnalog(
     /* pin= */ outputPin,
     /* voltage= */ 3.7);
 ```
@@ -158,7 +158,7 @@ Writes a digital HIGH or LOW to a pin.
 - `value` *(DigitalVoltageLevelEnum)*: `HIGH` or `LOW`.
 
 ```typescript
-this.simulationAPI.pin.writeDigital(
+this.simulation.api.pin.writeDigital(
     /* pin= */ outputPin,
     /* value= */ DigitalVoltageLevelEnum.LOW);
 ```
@@ -175,7 +175,7 @@ Adds a watcher for digital pin changes.
 - `callback` *(function)*: Called upon state change.
 
 ```typescript
-this.simulationAPI.pin.addDigitalPinWatch(
+this.simulation.api.pin.addDigitalPinWatch(
     /* pin= */ pin,
     /* edge= */ EdgeEnum.RISING,
     /* callback= */ (pin, voltage) => {
@@ -191,7 +191,7 @@ Adds a watcher for analog voltage changes exceeding a threshold.
 - `callback` *(function)*: Function called when voltage change exceeds threshold.
 
 ```typescript
-this.simulationAPI.pin.addAnalogPinWatch(
+this.simulation.api.pin.addAnalogPinWatch(
     /* pin= */ pin,
     /* deltaThreshold= */ 0.1,
     /* callback= */(pin, voltage) => {
@@ -204,7 +204,7 @@ this.simulationAPI.pin.addAnalogPinWatch(
 Removes the digital watch from a pin.
 
 ```typescript
-this.simulationAPI.pin.removeDigitalPinWatch(/* pin= */ pin);
+this.simulation.api.pin.removeDigitalPinWatch(/* pin= */ pin);
 ```
 
 #### `removeAnalogPinWatch(pin: IPin): boolean`
@@ -212,7 +212,7 @@ this.simulationAPI.pin.removeDigitalPinWatch(/* pin= */ pin);
 Removes an analog pin watch.
 
 ```typescript
-this.simulationAPI.pin.removeAnalogPinWatch(/* pin= */ pin);
+this.simulation.api.pin.removeAnalogPinWatch(/* pin= */ pin);
 ```
 
 ### Pin Mode Updates
@@ -224,7 +224,7 @@ Updates an existing pin to function as a basic input pin.
 - `pin` *(IPin)*: The pin to update.
 
 ```typescript
-this.simulationAPI.pin.updatePinToInput(/* pin= */ dataPin);
+this.simulation.api.pin.updatePinToInput(/* pin= */ dataPin);
 ```
 
 #### `updatePinToInputWithPullUp(pin: IPin, resistor?: number, pullVoltage?: number): void`
@@ -236,7 +236,7 @@ Updates an existing pin to function as an input with an internal pull-up resisto
 - `pullVoltage`: *(number, default: 5V)* - Voltage the pin is pulled up to.
 
 ```typescript
-this.simulationAPI.pin.updatePinToInputWithPullUp(
+this.simulation.api.pin.updatePinToInputWithPullUp(
   /* pin= */ buttonPin,
   /* resistor= */ 4700,
   /* pullVoltage= */ 3.3
@@ -251,7 +251,7 @@ Updates an existing pin to function as an input with an internal pull-down resis
 - `resistor`: *(number, default: 10000)* - Resistor value.
 
 ```typescript
-this.simulationAPI.pin.updatePinToInputWithPullDown(
+this.simulation.api.pin.updatePinToInputWithPullDown(
   /* pin= */ sensorPin,
   /* resistor= */ 10000
 );
@@ -266,7 +266,7 @@ Updates an existing pin to function as a digital output.
 - `value`: *(DigitalVoltageLevelEnum, default: LOW)* - Initial state (HIGH or LOW).
 
 ```typescript
-this.simulationAPI.pin.updatePinToDigitalOutput(
+this.simulation.api.pin.updatePinToDigitalOutput(
   /* pin= */ ledPin,
   /* highVoltage= */ 5,
   /* value= */ DigitalVoltageLevelEnum.HIGH
@@ -281,7 +281,7 @@ Updates an existing pin to function as an analog output.
 - `voltage`: *(number, default: 0V)* - Initial voltage.
 
 ```typescript
-this.simulationAPI.pin.updatePinToAnalogOutput(
+this.simulation.api.pin.updatePinToAnalogOutput(
   /* pin= */ pwmPin,
   /* voltage= */ 2.5
 );

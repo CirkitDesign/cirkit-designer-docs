@@ -2,12 +2,12 @@
 sidebar_position: 2
 ---
 
-# Simulation State
+# Runtime State
 
-The **Simulation State Manager** in your component's core logic enables seamless synchronization and management of simulation state variables between your core logic (TypeScript) and the UI layer. These variables are initialized in your subclass of `AbstractSimulationComponentLogic` and accessed using:
+The **Runtime State Manager** in your component's core logic enables seamless synchronization and management of simulation state variables between your core logic (TypeScript) and the UI layer. These variables are initialized in your subclass of `AbstractSimulationComponentLogic` and accessed using:
 
 ```typescript
-this.simulationState.methodName();
+this.simulation.runtimeState.methodName();
 ```
 
 ---
@@ -64,16 +64,16 @@ this.simulationState.methodName();
 
 ```typescript
 // Updating a boolean state variable
-this.simulationState.updateBooleanState('isLEDOn', true);
+this.simulation.runtimeState.updateBooleanState('isLEDOn', true);
 
 // Retrieving an integer state variable
-const temp = this.simulationState.getIntegerState('temperature');
+const temp = this.simulation.runtimeState.getIntegerState('temperature');
 
 // Subscribing to state variable changes
-this.simulationState.subscribeToIntegerStateUpdates('temperature', (newTemp) => {
-  this.log(`Temperature updated to ${newTemp}`);
+this.simulation.runtimeState.subscribeToIntegerStateUpdates('temperature', (newTemp) => {
+  this.simulation.log(`Temperature updated to ${newTemp}`);
 });
 ```
 
-The **Simulation State Manager** ensures your core logic and UI remain synchronized, enabling dynamic interactions and responsive simulation components.
+The **Runtime State Manager** ensures your core logic and UI remain synchronized, enabling dynamic interactions and responsive simulation components.
 

@@ -1,5 +1,5 @@
 ---
-sidebar_position: 6
+sidebar_position: 4
 ---
 
 # Timer API
@@ -25,7 +25,7 @@ Creates a new timer that triggers a callback when executed.
 - `callback` *(function)*: The function executed when the timer triggers.
 
 ```typescript
-const timer = this.simulationAPI.timer.createTimer(() => {
+const timer = this.simulation.api.timer.createTimer(() => {
   console.log('Timer executed');
 });
 ```
@@ -42,7 +42,7 @@ Starts the timer to execute after a given interval.
 
 ```typescript
 // Start timer to execute callback every 1 second (1,000,000 microseconds)
-this.simulationAPI.timer.startTimer(timer, 1_000_000, true);
+this.simulation.api.timer.startTimer(timer, 1_000_000, true);
 ```
 
 ### Stopping Timers
@@ -54,7 +54,7 @@ Stops a running timer.
 - `timer` *(ITimer)*: The timer object to stop.
 
 ```typescript
-this.simulationAPI.timer.stopTimer(timer);
+this.simulation.api.timer.stopTimer(timer);
 ```
 
 ### Getting Current Simulation Time
@@ -64,7 +64,7 @@ this.simulationAPI.timer.stopTimer(timer);
 Returns the current simulation time in nanoseconds.
 
 ```typescript
-const currentTime = this.simulationAPI.timer.getCurrentTimeNanos();
+const currentTime = this.simulation.api.timer.getCurrentTimeNanos();
 console.log(`Current simulation time: ${currentTime} ns`);
 ```
 
@@ -76,15 +76,15 @@ Below is an example of creating a repeating timer that triggers every 500 millis
 
 ```typescript
 // Create a repeating timer that triggers every 500 ms
-const repeatingTimer = this.simulationAPI.timer.createTimer(() => {
+const repeatingTimer = this.simulation.api.timer.createTimer(() => {
   console.log('500ms timer event');
 });
 
 // Start timer
-this.simulationAPI.timer.startTimer(repeatingTimer, 500_000, true);
+this.simulation.api.timer.startTimer(repeatingTimer, 500_000, true);
 
 // Stop timer after some condition
-// this.simulationAPI.timer.stopTimer(repeatingTimer);
+// this.simulation.api.timer.stopTimer(repeatingTimer);
 ```
 
 ---

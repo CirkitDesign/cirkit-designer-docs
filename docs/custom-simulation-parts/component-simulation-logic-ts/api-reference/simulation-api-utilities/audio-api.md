@@ -1,5 +1,5 @@
 ---
-sidebar_position: 8
+sidebar_position: 6
 ---
 
 # Audio API
@@ -23,7 +23,7 @@ Plays audio at a specific frequency, ideal for clean, precise audio tones like b
 
 ```typescript
 // Play a 440 Hz audio tone (A4 note)
-this.simulationAPI.audio.sendAudioFrequencyUpdate(440);
+this.simulation.api.audio.sendAudioFrequencyUpdate(440);
 ```
 
 ---
@@ -47,7 +47,7 @@ for (let i = 0; i < samples.length; i++) {
 }
 
 // Play the audio buffer
-this.simulationAPI.audio.sendAudioBuffer(sampleRate, samples);
+this.simulation.api.audio.sendAudioBuffer(sampleRate, samples);
 ```
 
 ---

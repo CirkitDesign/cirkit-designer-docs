@@ -40,12 +40,12 @@ export class SimulationComponentUI extends AbstractSimulationComponentUI {
 
   // When mouse is pressed down, update button state to true
   handleButtonMouseDown() {
-    this.simulationState.updateBooleanState('isButtonPressed', true);
+    this.simulation.runtimeState.updateBooleanState('isButtonPressed', true);
   }
 
   // When mouse is released, update button state to false
   handleButtonMouseUp() {
-    this.simulationState.updateBooleanState('isButtonPressed', false);
+    this.simulation.runtimeState.updateBooleanState('isButtonPressed', false);
   }
 }
 ```
@@ -86,39 +86,39 @@ export class SimulationComponentUI extends AbstractSimulationComponentUI {
   // Handles mouse down events for directional control, updating state and UI
   onMouseDown(event: MouseEvent, xDir: number, yDir: number) {
     event.preventDefault();
-    this.simulationState.updateIntegerState('xValue', xDir);
-    this.simulationState.updateIntegerState('yValue', yDir);
+    this.simulation.runtimeState.updateIntegerState('xValue', xDir);
+    this.simulation.runtimeState.updateIntegerState('yValue', yDir);
     this.knobTransform = this.computeTransform(xDir, yDir);
   }
 
   // Handles mouse release events, resetting joystick position
   onMouseUp() {
-    this.simulationState.updateIntegerState('xValue', 0);
-    this.simulationState.updateIntegerState('yValue', 0);
+    this.simulation.runtimeState.updateIntegerState('xValue', 0);
+    this.simulation.runtimeState.updateIntegerState('yValue', 0);
     this.knobTransform = this.computeTransform(0, 0);
   }
 
   // Handles press event for joystick knob, sets pressed state to true
   press(event: MouseEvent) {
     event.preventDefault();
-    this.simulationState.updateBooleanState('pressed', true);
+    this.simulation.runtimeState.updateBooleanState('pressed', true);
   }
 
   // Handles release event for joystick knob, sets pressed state to false
   release() {
-    this.simulationState.updateBooleanState('pressed', false);
+    this.simulation.runtimeState.updateBooleanState('pressed', false);
   }
 }
 ```
 
 ## Core Elements Available in UI TypeScript
 
-- **`simulationState`**: Manages synchronization of state variables between UI and core logic.
+- **`simulation.runtimeState`**: Manages synchronization of state variables between UI and core logic.
   - Methods:
     - `updateBooleanState()`, `updateIntegerState()`, etc.
     - `subscribeToBooleanStateUpdates()`, `subscribeToIntegerStateUpdates()`, etc.
 
-- **`simulationAPI`**: Provides helper functions for UI interactions and system events.
+- **`simulation.api`**: Provides helper functions for UI interactions and system events.
   - Methods include:
     - `triggerUIRefresh()`
     - `getComponentRotation()`
@@ -129,7 +129,7 @@ export class SimulationComponentUI extends AbstractSimulationComponentUI {
 
 1. Define the visual structure and user interaction triggers in **HTML**.
 2. Implement the interactive behaviors and state synchronization logic in **TypeScript**.
-3. The TypeScript logic uses provided APIs (`simulationState` and `simulationAPI`) to manage dynamic component behaviors.
+3. The TypeScript logic uses provided APIs (`simulation.runtimeState` and `simulation.api`) to manage dynamic component behaviors.
 
 This approach allows powerful, customizable, and interactive components tailored to your simulation needs.
 

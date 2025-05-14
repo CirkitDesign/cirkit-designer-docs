@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 3
 ---
 
 # SPI API
@@ -74,27 +74,27 @@ Here's how the SPI Master usage might look conceptually, including explicit CS p
 
 ```typescript
 // Master pins setups
-const sckPin = this.simulationAPI.pin.createDigitalOutputPin('SCK');
-const mosiPin = this.simulationAPI.pin.createDigitalOutputPin('MOSI');
-const misoPin = this.simulationAPI.pin.createInputPin('MISO');
+const sckPin = this.simulation.api.pin.createDigitalOutputPin('SCK');
+const mosiPin = this.simulation.api.pin.createDigitalOutputPin('MOSI');
+const misoPin = this.simulation.api.pin.createInputPin('MISO');
 
-this.simulationAPI.spi.createSPIMaster(sckPin, mosiPin, misoPin);
+this.simulation.api.spi.createSPIMaster(sckPin, mosiPin, misoPin);
 
 // Explicit CS pin for illustration purposes
-const csPin = this.simulationAPI.pin.createDigitalOutputPin('CS');
+const csPin = this.simulation.api.pin.createDigitalOutputPin('CS');
 
 // Pull CS LOW to start transaction
-this.simulationAPI.pin.writeDigital(csPin, DigitalVoltageLevelEnum.LOW);
+this.simulation.api.pin.writeDigital(csPin, DigitalVoltageLevelEnum.LOW);
 
 // SPI data transfers
 const dataToSend = [0x12, 0x34, 0x56];
 for (const byte of dataToSend) {
-  const received = this.simulationAPI.spi.spiMasterTransfer(byte);
+  const received = this.simulation.api.spi.spiMasterTransfer(byte);
   console.log(`Master sent 0x${byte.toString(16)}, got 0x${received.toString(16)}`);
 }
 
 // Pull CS HIGH to end transaction
-this.simulationAPI.pin.writeDigital(csPin, DigitalVoltageLevelEnum.HIGH);
+this.simulation.api.pin.writeDigital(csPin, DigitalVoltageLevelEnum.HIGH);
 ```
 
 ---
@@ -144,17 +144,17 @@ The SPI Slave's transaction lifecycle revolves around the Chip Select (CS) pin c
 Here is a clear example illustrating this flow:
 
 ```typescript
-const sckPin = this.simulationAPI.pin.createInputPin('SCK');
-const mosiPin = this.simulationAPI.pin.createInputPin('MOSI');
-const misoPin = this.simulationAPI.pin.createDigitalOutputPin(
+const sckPin = this.simulation.api.pin.createInputPin('SCK');
+const mosiPin = this.simulation.api.pin.createInputPin('MOSI');
+const misoPin = this.simulation.api.pin.createDigitalOutputPin(
   /* pinName= */ 'MISO',
   /* highVoltage= */ 5,
   /* value= */ DigitalVoltageLevelEnum.LOW);
-const csPin = this.simulationAPI.pin.createInputPin('CS');
+const csPin = this.simulation.api.pin.createInputPin('CS');
 
 const buffer = new Uint8Array(64);
 
-this.simulationAPI.spi.createSPISlave(
+this.simulation.api.spi.createSPISlave(
   sckPin,
   mosiPin,
   misoPin,
@@ -162,20 +162,20 @@ this.simulationAPI.spi.createSPISlave(
     console.log('SPI transaction complete. Received:', count, 'bytes');
     console.log('Data:', receivedBuffer.slice(0, count));
 
-    if (this.simulationAPI.pin.readAnalog(csPin) < 2.5) {
+    if (this.simulation.api.pin.readAnalog(csPin) < 2.5) {
       // CS is still LOW; master may send more data
-      this.simulationAPI.spi.spiSlaveStart(receivedBuffer, receivedBuffer.length);
+      this.simulation.api.spi.spiSlaveStart(receivedBuffer, receivedBuffer.length);
     }
   }
 );
 
-this.simulationAPI.pin.addDigitalPinWatch(csPin, EdgeEnum.Both, (pin, voltage) => {
+this.simulation.api.pin.addDigitalPinWatch(csPin, EdgeEnum.Both, (pin, voltage) => {
   if (voltage < 2.5) {
     // CS LOW: begin transaction
-    this.simulationAPI.spi.spiSlaveStart(buffer, buffer.length);
+    this.simulation.api.spi.spiSlaveStart(buffer, buffer.length);
   } else {
     // CS HIGH: end transaction
-    this.simulationAPI.spi.spiSlaveStop();
+    this.simulation.api.spi.spiSlaveStop();
   }
 });
 ```
@@ -198,20 +198,20 @@ In practice, the Slave may have predefined response data, computed data, or dyna
 Here's an example demonstrating how the Slave pre-fills the buffer to send data back to the Master:
 
 ```typescript
-const sckPin = this.simulationAPI.pin.createInputPin('SCK');
-const mosiPin = this.simulationAPI.pin.createInputPin('MOSI');
-const misoPin = this.simulationAPI.pin.createDigitalOutputPin(
+const sckPin = this.simulation.api.pin.createInputPin('SCK');
+const mosiPin = this.simulation.api.pin.createInputPin('MOSI');
+const misoPin = this.simulation.api.pin.createDigitalOutputPin(
   /* pinName= */ 'MISO',
   /* highVoltage= */ 5,
   /* value= */ DigitalVoltageLevelEnum.LOW);
-const csPin = this.simulationAPI.pin.createInputPin('CS');
+const csPin = this.simulation.api.pin.createInputPin('CS');
 
 // Example data that the Slave will send back
 const slaveResponseData = new Uint8Array([0xAA, 0xBB, 0xCC]);
 
 let responseIndex = 0;
 
-this.simulationAPI.spi.createSPISlave(
+this.simulation.api.spi.createSPISlave(
   sckPin,
   mosiPin,
   misoPin,
@@ -219,18 +219,18 @@ this.simulationAPI.spi.createSPISlave(
     console.log('SPI transaction complete. Received:', count, 'bytes');
     console.log('Data from Master:', receivedBuffer.slice(0, count));
 
-    if (this.simulationAPI.pin.readAnalog(csPin) < 2.5) {
+    if (this.simulation.api.pin.readAnalog(csPin) < 2.5) {
       // CS is still LOW: prepare next byte
       const buffer = new Uint8Array(1);
       buffer[0] = slaveResponseData[responseIndex % slaveResponseData.length];
       responseIndex += 1;
 
-      this.simulationAPI.spi.spiSlaveStart(buffer, buffer.length);
+      this.simulation.api.spi.spiSlaveStart(buffer, buffer.length);
     }
   }
 );
 
-this.simulationAPI.pin.addDigitalPinWatch(csPin, EdgeEnum.Both, (pin, voltage) => {
+this.simulation.api.pin.addDigitalPinWatch(csPin, EdgeEnum.Both, (pin, voltage) => {
   if (voltage < 2.5) {
     // CS LOW: start transaction, send the first byte back
     responseIndex = 0;
@@ -238,10 +238,10 @@ this.simulationAPI.pin.addDigitalPinWatch(csPin, EdgeEnum.Both, (pin, voltage) =
     buffer[0] = slaveResponseData[responseIndex];
     responseIndex += 1;
 
-    this.simulationAPI.spi.spiSlaveStart(buffer, buffer.length);
+    this.simulation.api.spi.spiSlaveStart(buffer, buffer.length);
   } else {
     // CS HIGH: end transaction
-    this.simulationAPI.spi.spiSlaveStop();
+    this.simulation.api.spi.spiSlaveStop();
   }
 });
 ```

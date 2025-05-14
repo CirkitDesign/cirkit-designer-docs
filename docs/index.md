@@ -11,11 +11,11 @@ Cirkit Designer is an online platform for designing, simulating, and prototyping
 
 Here are some quick examples of simulatable circuits built with Cirkit Designer:
 
-- [Pong Game with Arduino UNO and OLED Display](https://app.cirkitdesigner.com/project/0c10f349-34b2-46f2-b428-2b4b8b41b003)
-- [Measure Temperature with DHT11 and print to 16x2 LCD Display](https://app.cirkitdesigner.com/project/3aa5bf2c-a799-4f99-9c3a-eea420b89244)
-- [Track Time with DS1307 RTC and print to LCD Display](https://app.cirkitdesigner.com/project/374e7696-5d6d-457d-8235-8ab1581fb324)
-- [Play a melody to Piezo Buzzer](https://app.cirkitdesigner.com/project/f8a25630-e336-4ebe-92e0-2bf0aaf57f54)
-- [Stepper Motor + A4988 Half Stepping](https://app.cirkitdesigner.com/project/0b502b5d-47f7-4067-bc6d-4ff8794a2ded)
+- [Pong Game with Arduino UNO and OLED Display](https://app.cirkitdesigner.com/project/745b1bea-ea43-401c-aa76-5700d76f8bbe)
+- [Measure Temperature with DHT11 and print to 16x2 LCD Display](https://app.cirkitdesigner.com/project/eb0f9b83-2497-4c45-b2b2-31488d10e9bd)
+- [Track Time with DS1307 RTC and print to LCD Display](https://app.cirkitdesigner.com/project/27fe774d-2fd4-4888-b2a4-da812fa2867e)
+- [Play a melody to Piezo Buzzer](https://app.cirkitdesigner.com/project/411009bc-e924-4820-88c7-b79716005ba2)
+- [Stepper Motor + A4988 Half Stepping](https://app.cirkitdesigner.com/project/bcf8cfa9-b766-4f4f-a9eb-7e548bba28fd)
 
 ## Why Cirkit Designer?
 

@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 2
 ---
 
 # I2C API
@@ -28,7 +28,7 @@ Creates an I2C slave device that responds to communication initiated by an I2C m
 - `callbacks` *(I2CSlaveCallbacks)*: Callbacks triggered on I2C events.
 
 ```typescript
-this.simulationAPI.i2c.createI2CSlave(
+this.simulation.api.i2c.createI2CSlave(
   /* address= */ 0x3C,
   /* sclPin= */ sclPin,
   /* sdaPin= */ sdaPin,
@@ -61,12 +61,12 @@ Creates an I2C master device that initiates communication with registered slave 
 - `registerI2CSlave` *(function)*: Function to register slave devices with the master.
 
 ```typescript
-this.simulationAPI.i2c.createI2CMaster(
+this.simulation.api.i2c.createI2CMaster(
   /* sclPin= */ sclPin,
   /* sdaPin= */ sdaPin,
   /* registerI2CSlave= */ (slaveConfig: I2CSlaveConfig) => {
     // Register slave component with the master
-    return this.simulationAPI.registerI2CSlave(slaveConfig);
+    return this.simulation.api.registerI2CSlave(slaveConfig);
   }
 );
 ```
@@ -138,11 +138,11 @@ Below is a simple example of registering an OLED display as an I2C slave device:
 
 ```typescript
 // Initialize SCL and SDA pins
-const sclPin = this.simulationAPI.pin.createInputPin('SCK');
-const sdaPin = this.simulationAPI.pin.createInputPin('SDA');
+const sclPin = this.simulation.api.pin.createInputPin('SCK');
+const sdaPin = this.simulation.api.pin.createInputPin('SDA');
 
 // Create I2C slave
-this.simulationAPI.i2c.createI2CSlave(
+this.simulation.api.i2c.createI2CSlave(
   0x3C, sclPin, sdaPin, {
     connect: (address, isWriteMode) => {
       console.log(`Connected to ${address}, Write mode: ${isWriteMode}`);

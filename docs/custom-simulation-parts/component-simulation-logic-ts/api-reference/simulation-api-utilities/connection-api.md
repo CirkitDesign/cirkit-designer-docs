@@ -1,5 +1,5 @@
 ---
-sidebar_position: 7
+sidebar_position: 5
 ---
 
 # Connection API
@@ -39,7 +39,7 @@ LED connections represent internal Light Emitting Diodes placed between two pins
 Creates a direct internal electrical connection (wire) between two component pins.
 
 ```typescript
-const wireConnection = this.simulationAPI.connections.addWire(pin1, pin2);
+const wireConnection = this.simulation.api.connections.addWire(pin1, pin2);
 ```
 
 #### `removeWire(wire: IWireConnection): boolean`
@@ -47,7 +47,7 @@ const wireConnection = this.simulationAPI.connections.addWire(pin1, pin2);
 Removes an existing internal wire connection.
 
 ```typescript
-const removed = this.simulationAPI.connections.removeWire(wireConnection);
+const removed = this.simulation.api.connections.removeWire(wireConnection);
 ```
 
 ---
@@ -61,7 +61,7 @@ Creates an internal resistor connection with specified resistance between two co
 - `resistance` *(number)*: Resistance value in ohms (Ω).
 
 ```typescript
-const resistorConnection = this.simulationAPI.connections.addResistor(pin1, pin2, 4700);
+const resistorConnection = this.simulation.api.connections.addResistor(pin1, pin2, 4700);
 ```
 
 #### `updateResistor(resistor: IResistorConnection, newResistance: number): boolean`
@@ -71,7 +71,7 @@ Updates the resistance value of an existing internal resistor connection.
 - `newResistance` *(number)*: New resistance value in ohms (Ω).
 
 ```typescript
-const updated = this.simulationAPI.connections.updateResistor(resistorConnection, 10000);
+const updated = this.simulation.api.connections.updateResistor(resistorConnection, 10000);
 ```
 
 #### `removeResistor(resistor: IResistorConnection): boolean`
@@ -79,7 +79,7 @@ const updated = this.simulationAPI.connections.updateResistor(resistorConnection
 Removes an existing internal resistor connection.
 
 ```typescript
-const removed = this.simulationAPI.connections.removeResistor(resistorConnection);
+const removed = this.simulation.api.connections.removeResistor(resistorConnection);
 ```
 
 ---
@@ -93,7 +93,7 @@ Creates an internal LED connection between two component pins.
 - `forwardVoltageThreshold` *(number, optional)*: Voltage required for the internal LED to emit light (default behavior determined by simulator if not specified).
 
 ```typescript
-const ledConnection = this.simulationAPI.connections.addLED(pinAnode, pinCathode, 2.1);
+const ledConnection = this.simulation.api.connections.addLED(pinAnode, pinCathode, 2.1);
 ```
 
 #### `removeLED(led: ILEDConnection): boolean`
@@ -101,7 +101,7 @@ const ledConnection = this.simulationAPI.connections.addLED(pinAnode, pinCathode
 Removes an existing internal LED connection.
 
 ```typescript
-const removed = this.simulationAPI.connections.removeLED(ledConnection);
+const removed = this.simulation.api.connections.removeLED(ledConnection);
 ```
 
 ---

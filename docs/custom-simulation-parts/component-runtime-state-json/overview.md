@@ -3,9 +3,9 @@ sidebar_position: 1
 title: Overview
 ---
 
-# Component Simulation State JSON
+# Component Runtime State JSON
 
-The **Simulation State JSON** file defines the state variables that represent your component's interactive behaviors during simulation. These variables are shared between your UI (defined in UI HTML and UI TypeScript files) and core simulation logic (defined in Simulation Logic Typescript file), enabling seamless synchronization of visual interactions and underlying simulation behavior.
+The **Runtime State JSON** file defines the state variables that represent your component's interactive behaviors during simulation. These variables are shared between your UI (defined in UI HTML and UI TypeScript files) and core simulation logic (defined in Simulation Logic Typescript file), enabling seamless synchronization of visual interactions and underlying simulation behavior.
 
 ## Quick Start Example
 
@@ -13,7 +13,7 @@ Here is a minimal example to quickly get you started defining a basic boolean st
 
 ```json
 {
-  "stateVariables": [
+  "runtimeStateVariables": [
     {
       "id": "pressed",
       "type": "boolean",
@@ -34,7 +34,7 @@ A basic structure of this file:
 
 ```json
 {
-  "stateVariables": [
+  "runtimeStateVariables": [
     {
       "id": "variableName",
       "type": "integer",
@@ -86,7 +86,7 @@ Here are practical examples with descriptions for common component types:
 
 ```json
 {
-  "stateVariables": [
+  "runtimeStateVariables": [
     {
       "id": "pressed",
       "type": "boolean",
@@ -104,7 +104,7 @@ Here are practical examples with descriptions for common component types:
 
 ```json
 {
-  "stateVariables": [
+  "runtimeStateVariables": [
     {
       "id": "isOn",
       "type": "boolean",
@@ -122,7 +122,7 @@ Here are practical examples with descriptions for common component types:
 
 ```json
 {
-  "stateVariables": [
+  "runtimeStateVariables": [
     {
       "id": "temperature",
       "type": "integer",
@@ -144,7 +144,7 @@ Here are practical examples with descriptions for common component types:
 
 ```json
 {
-  "stateVariables": [
+  "runtimeStateVariables": [
     {
       "id": "display",
       "type": "display",

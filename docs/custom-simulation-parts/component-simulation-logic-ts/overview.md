@@ -39,7 +39,7 @@ The `init()` method is required—it's invoked automatically when simulation sta
 
 Within your class, you have access to three key APIs:
 
-### 1. `simulationAPI`
+### 1. `simulation.api`
 
 Provides access to core simulation features:
 
@@ -64,7 +64,7 @@ Provides access to core simulation features:
   - SPI (`spi.transferData`)
   - UART communication methods
 
-### 2. `simulationState`
+### 2. `simulation.runtimeState`
 
 Manages state variables shared between the UI and the core simulation logic. Examples of these states include:
 
@@ -80,7 +80,7 @@ Available methods:
 
 (Equivalent methods exist for Boolean, Decimal, and String states.)
 
-### 3. `componentProperties`
+### 3. `simulation.componentProperties`
 
 Manages inherent, static properties of a component that persist across simulation runs. Examples include:
 
@@ -106,30 +106,30 @@ export class SimulationComponentLogic extends AbstractSimulationComponentLogic {
   private pinSel: IPin;
 
   public init(): void {
-    this.hidePicture();
+    this.simulation.hideStaticPicture();
 
     // Initialize joystick pins with default voltages
-    this.pinVert = this.simulationAPI.pin.createAnalogOutputPin('VERT', 2.5);
-    this.pinHorz = this.simulationAPI.pin.createAnalogOutputPin('HORZ', 2.5);
-    this.pinSel = this.simulationAPI.pin.createAnalogOutputPin('SEL', 5);
+    this.pinVert = this.simulation.api.pin.createAnalogOutputPin('VERT', 2.5);
+    this.pinHorz = this.simulation.api.pin.createAnalogOutputPin('HORZ', 2.5);
+    this.pinSel = this.simulation.api.pin.createAnalogOutputPin('SEL', 5);
 
     // Subscribe to UI state changes
-    this.simulationState.subscribeToIntegerStateUpdates('xValue', this.updateJoystickPosition);
-    this.simulationState.subscribeToIntegerStateUpdates('yValue', this.updateJoystickPosition);
-    this.simulationState.subscribeToBooleanStateUpdates('pressed', this.updateButtonState);
+    this.simulation.runtimeState.subscribeToIntegerStateUpdates('xValue', this.updateJoystickPosition);
+    this.simulation.runtimeState.subscribeToIntegerStateUpdates('yValue', this.updateJoystickPosition);
+    this.simulation.runtimeState.subscribeToBooleanStateUpdates('pressed', this.updateButtonState);
   }
 
   private updateJoystickPosition = () => {
-    const x = this.simulationState.getIntegerState('xValue');
-    const y = this.simulationState.getIntegerState('yValue');
+    const x = this.simulation.runtimeState.getIntegerState('xValue');
+    const y = this.simulation.runtimeState.getIntegerState('yValue');
 
-    this.simulationAPI.pin.writeAnalog(this.pinHorz, 2.5 * (x + 1));
-    this.simulationAPI.pin.writeAnalog(this.pinVert, 2.5 * (y + 1));
+    this.simulation.api.pin.writeAnalog(this.pinHorz, 2.5 * (x + 1));
+    this.simulation.api.pin.writeAnalog(this.pinVert, 2.5 * (y + 1));
   };
 
   private updateButtonState = (pressed: boolean) => {
     const voltage = pressed ? 0 : 5;
-    this.simulationAPI.pin.writeAnalog(this.pinSel, voltage);
+    this.simulation.api.pin.writeAnalog(this.pinSel, voltage);
   };
 }
 ```

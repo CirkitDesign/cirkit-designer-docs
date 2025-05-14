@@ -24,8 +24,8 @@ Creating a custom component involves three straightforward steps:
    - Enables interactive behaviors during simulation.
    - Consists of four files:
      - **UI HTML** *(defines visual layout and interactive elements; dynamically loaded into Angular)*
-     - **UI TypeScript** *(handles user interactions, manages UI logic related to the UI HTML, and synchronizes visuals with simulation state changes)*
-     - **Simulation State JSON** *(defines state variables shared between the UI and the core simulation logic)*
+     - **UI TypeScript** *(handles user interactions, manages UI logic related to the UI HTML, and synchronizes visuals with simulation runtime state changes)*
+     - **Runtime State JSON** *(defines state variables shared between the UI and the core simulation logic)*
      - **Component Simulation Logic (TypeScript)** *(manages component's electrical behavior and core  logic in simulations)*
 
 ## Understanding Visual Layers: Static vs Interactive
@@ -54,10 +54,10 @@ Every custom component includes two distinct visual layers:
 
 To get started implementing your custom component, explore the detailed guides for each file type:
 
-- [UI HTML Guide](#)
-- [UI TypeScript Guide](#)
-- [Simulation State JSON Guide](#)
-- [Core Simulation Logic TypeScript Guide](#)
+- [UI HTML Guide](/docs/custom-simulation-parts/component-ui/overview.md)
+- [UI TypeScript Guide](/docs/custom-simulation-parts/component-ui/overview.md)
+- [Runtime State JSON Guide](/docs/custom-simulation-parts/component-runtime-state-json/overview.md)
+- [Core Simulation Logic TypeScript Guide](/docs/custom-simulation-parts/component-simulation-logic-ts/overview.md)
 
-For detailed examples and templates to guide you through implementation, see the [Examples & Templates](#) section.
+For detailed examples and templates to guide you through implementation, see the [Component Examples & Templates](/docs/custom-simulation-parts/component-examples.md) section.
 
