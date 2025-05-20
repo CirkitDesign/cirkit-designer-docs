@@ -60,8 +60,8 @@ A numeric display capable of representing digits and hexadecimal characters.
 
 A multi-digit numeric display ideal for counters, clocks, and numeric indicators.
 
-- [View Source Code](https://docs.cirkitdesigner.com/component-simulation-code/55bd6d2a-1868-4c30-9afd-4352dbd1b84e)
-- [Open in Circuit Design App](https://app.cirkitdesigner.com/project?components=55bd6d2a-1868-4c30-9afd-4352dbd1b84e)
+- [View Source Code](https://docs.cirkitdesigner.com/component-simulation-code/7b84a511-8cdf-4749-8c78-72f19f9601d4)
+- [Open in Circuit Design App](https://app.cirkitdesigner.com/project?components=7b84a511-8cdf-4749-8c78-72f19f9601d4)
 - [Demo Circuit](https://app.cirkitdesigner.com/project/c296dc7e-4b76-4612-bfcb-e25b23e01fa3)
 
 ### 16x2 LCD Display
