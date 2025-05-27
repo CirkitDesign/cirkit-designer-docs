@@ -1,0 +1,52 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="80mm"
+  height="36mm"
+  viewBox="0 0 80 36"
+  style="font-size:1.5px;font-family:monospace"
+  version="1.1"
+>
+  <defs>
+    <pattern id="characters" width="3.55" height="5.95"
+             patternUnits="userSpaceOnUse" x="12.45" y="12.55">
+      <rect width="2.95" height="5.55" fill-opacity="0.05"/>
+    </pattern>
+    <pattern id="pins" width="2.54" height="3.255"
+             patternUnits="userSpaceOnUse" y="1.1">
+      <path fill="#92926d"
+            d="M0,0.55c0,0 0.21,-0.52 0.87,-0.52
+               0.67,0 0.81,0.51 0.81,0.51v1.81h-1.869z"/>
+      <circle r="0.45" cx="0.827" cy="0.9"/>
+    </pattern>
+  </defs>
+
+  <!-- outer housing -->
+  <rect width="80" height="36" fill="#087f45"/>
+
+  <!-- bezel shadow -->
+  <rect x="4.95" y="5.7" width="71.2" height="25.2"/>
+
+  <!-- inner bezel + backplate -->
+  <rect x="7.55" y="10.3" width="66" height="16"
+        rx="1.5" ry="1.5" fill="#6cb201"/>
+  <rect x="7.55" y="10.3" width="66" height="16"
+        rx="1.5" ry="1.5" opacity="0"/>
+
+  <!-- I²C pins ribbon -->
+  <rect x="7.55" y="-2.5" width="10.16" height="2.5"
+        fill="url(#pins)" transform="rotate(90)"/>
+  <text fill="white" font-family="monospace" font-size="1.5px">
+    
+    <!-- removed the “1” tspan -->
+    <tspan x="2.3"  y="8.9">GND</tspan>
+    <tspan x="2.3"  y="11.4">VCC</tspan>
+    <tspan x="2.3"  y="14">SDA</tspan>
+    <tspan x="2.3"  y="16.6">SCL</tspan>
+  </text>
+
+  <!-- character grid + pixels -->
+  <rect x="12.45" y="12.55" width="56.2" height="11.5"
+        fill="url(#characters)"/>
+  <path d="" transform="translate(12.45,12.55)" fill="black"/>
+
+</svg>
