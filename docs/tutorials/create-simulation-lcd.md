@@ -245,28 +245,20 @@ import { AbstractSimulationComponentLogic, IFrameBuffer, IPin, u8 } from '@cirki
 export class SimulationComponentLogic extends AbstractSimulationComponentLogic {
   private sclPin: IPin;
   private sdaPin: IPin;
-  private i2cAddress: number = 0x27; // Default backpack address
+  private i2cAddress: number = 0x27; // Default I2C address for many LCD backpacks
 
-  private ddram = new Uint8Array(128); // LCD DDRAM (80 chars, but only 32 visible)
-  private cursorPos = 0;
+  private ddram = new Uint8Array(128); // Display Data RAM (80 chars for 2x40, but we use 2x16)
   private nibbleBuffer: number[] = [];
-  private backlight = true;
-  private rs = 0;
-  private rw = 0;
-  private en = 0;
-  private d4 = 0;
-  private d5 = 0;
-  private d6 = 0;
-  private d7 = 0;
-  private isConnected = false;
-  private isWriteMode = true;
-  private displayOn = true;
-  private entryIncrement = true;
+  private cursorPos = 0;
+  private displayControl = { displayOn: true, cursorOn: false, blinkOn: false };
+  private functionSet = { dataLength: 4, numLines: 2, font: 0 };
+  private entryMode = { increment: true, displayShift: false };
+  public isConnected: boolean = false;
+  public isWriteMode: boolean = true;
 
   public init(): void {
     this.ddram.fill(0x20); // Fill with spaces
-    this.sclPin = this.simulation.api.pin.createInputPin('SCL');
-    this.sdaPin = this.simulation.api.pin.createInputPin('SDA');
+    this.registerPins();
     this.simulation.api.i2c.createI2CSlave(
       this.i2cAddress,
       this.sclPin,
@@ -276,13 +268,33 @@ export class SimulationComponentLogic extends AbstractSimulationComponentLogic {
         writeByte: this.writeByte.bind(this),
         readByte: this.readByte.bind(this),
         disconnect: this.onDisconnect.bind(this),
-      }
+      },
     );
-    this.simulation.hideStaticPicture();
     this.updateDisplay();
   }
 
-  private onConnect(address: u8, isWriteMode: boolean): boolean {
+  public registerPins() {
+    this.sclPin = this.simulation.api.pin.createInputPin('SCL');
+    this.sdaPin = this.simulation.api.pin.createInputPin('SDA');
+  }
+
+  public writeByte(data: u8): boolean {
+    if (this.isConnected && this.isWriteMode) {
+      this.onI2CWrite(new Uint8Array([data]));
+      return true;
+    }
+    return false;
+  }
+
+  public readByte(): u8 {
+    return 0xff;
+  }
+
+  public onDisconnect() {
+    this.isConnected = false;
+  }
+
+  public onConnect(address: u8, isWriteMode: boolean): boolean {
     if (address === this.i2cAddress) {
       this.isConnected = true;
       this.isWriteMode = isWriteMode;
@@ -292,39 +304,22 @@ export class SimulationComponentLogic extends AbstractSimulationComponentLogic {
     return false;
   }
 
-  private onDisconnect() {
-    this.isConnected = false;
-  }
-
-  private writeByte(data: u8): boolean {
-    if (!this.isConnected || !this.isWriteMode) return false;
-    // PCF8574: P0=RS, P1=RW, P2=EN, P3=Backlight, P4-7=D4-7
-    const p0 = (data >> 0) & 1; // RS
-    const p1 = (data >> 1) & 1; // RW
-    const p2 = (data >> 2) & 1; // EN
-    const p3 = (data >> 3) & 1; // Backlight
-    const p4 = (data >> 4) & 1; // D4
-    const p5 = (data >> 5) & 1; // D5
-    const p6 = (data >> 6) & 1; // D6
-    const p7 = (data >> 7) & 1; // D7
-    this.backlight = !!p3;
-    // Rising edge on EN latches nibble
-    if (this.en === 0 && p2 === 1) {
-      const nibble = (p7 << 3) | (p6 << 2) | (p5 << 1) | (p4 << 0);
-      this.latchNibble(nibble, p0);
+  private onI2CWrite(data: Uint8Array): void {
+    for (let i = 0; i < data.length; i++) {
+      const byte = data[i];
+      // PCF8574 backpack: P0=RS, P1=RW, P2=EN, P3=Backlight, P4=D4, P5=D5, P6=D6, P7=D7
+      const rs = (byte >> 0) & 0x01;
+      const en = (byte >> 2) & 0x01;
+      const d4 = (byte >> 4) & 0x01;
+      const d5 = (byte >> 5) & 0x01;
+      const d6 = (byte >> 6) & 0x01;
+      const d7 = (byte >> 7) & 0x01;
+      // Latch nibble on EN rising edge
+      if (en === 1) {
+        const nibble = (d7 << 3) | (d6 << 2) | (d5 << 1) | d4;
+        this.latchNibble(nibble, rs);
+      }
     }
-    this.rs = p0;
-    this.rw = p1;
-    this.en = p2;
-    this.d4 = p4;
-    this.d5 = p5;
-    this.d6 = p6;
-    this.d7 = p7;
-    return true;
-  }
-
-  private readByte(): u8 {
-    return 0xff; // Not used
   }
 
   private latchNibble(nibble: number, rs: number): void {
@@ -340,32 +335,51 @@ export class SimulationComponentLogic extends AbstractSimulationComponentLogic {
     }
   }
 
-  private processCommand(cmd: number): void {
-    if ((cmd & 0x80) === 0x80) {
-      // Set DDRAM address
-      this.cursorPos = cmd & 0x7f;
-    } else if ((cmd & 0x01) === 0x01) {
-      // Clear display
-      this.ddram.fill(0x20);
-      this.cursorPos = 0;
-      this.updateDisplay();
-    } else if ((cmd & 0x02) === 0x02) {
-      // Return home
-      this.cursorPos = 0;
-    } else if ((cmd & 0xf8) === 0x08) {
-      // Display ON/OFF
-      this.displayOn = (cmd & 0x04) !== 0;
-      this.updateDisplay();
-    } else if ((cmd & 0xf8) === 0x04) {
-      // Entry mode set
-      this.entryIncrement = (cmd & 0x02) !== 0;
+  private processCommand(command: number): void {
+    if (command & 0x80) {
+      this.cursorPos = command & 0x7f;
+    } else if (command & 0x40) {
+      // CGRAM not implemented
+    } else {
+      switch (command & 0xf0) {
+        case 0x00:
+          if ((command & 0x01) === 0x01) {
+            this.ddram.fill(0x20);
+            this.cursorPos = 0;
+            this.updateDisplay();
+          } else if ((command & 0x02) === 0x02) {
+            this.cursorPos = 0;
+          }
+          break;
+        case 0x10:
+          // Cursor/display shift not implemented
+          break;
+        case 0x20:
+          this.functionSet.dataLength = command & 0x10 ? 8 : 4;
+          this.functionSet.numLines = command & 0x08 ? 2 : 1;
+          this.functionSet.font = command & 0x04 ? 1 : 0;
+          break;
+        case 0x80:
+          this.cursorPos = command & 0x7f;
+          break;
+        default:
+          if ((command & 0xf8) === 0x08) {
+            this.displayControl.displayOn = (command & 0x04) !== 0;
+            this.displayControl.cursorOn = (command & 0x02) !== 0;
+            this.displayControl.blinkOn = (command & 0x01) !== 0;
+            this.updateDisplay();
+          } else if ((command & 0xf8) === 0x04) {
+            this.entryMode.increment = (command & 0x02) !== 0;
+            this.entryMode.displayShift = (command & 0x01) !== 0;
+          }
+          break;
+      }
     }
-    // (Other commands: not implemented for brevity)
   }
 
   private writeData(data: number): void {
     this.ddram[this.cursorPos & 0x7f] = data;
-    if (this.entryIncrement) {
+    if (this.entryMode.increment) {
       this.cursorPos = (this.cursorPos + 1) & 0x7f;
     } else {
       this.cursorPos = (this.cursorPos - 1) & 0x7f;
@@ -374,92 +388,126 @@ export class SimulationComponentLogic extends AbstractSimulationComponentLogic {
   }
 
   private updateDisplay(): void {
-    const fb = this.simulation.runtimeState.getFrameBuffer('lcdDisplay');
-    if (!this.displayOn) {
-      fb.clear();
+    const frameBuffer = this.simulation.runtimeState.getFrameBuffer('lcdDisplay');
+    if (!this.displayControl.displayOn) {
+      frameBuffer.clear();
       return;
     }
-    // 16x2 chars, each 5x8 pixels
-    for (let row = 0; row < 2; row++) {
-      for (let col = 0; col < 16; col++) {
-        const addr = row === 0 ? col : 0x40 + col;
-        const charCode = this.ddram[addr];
-        this.renderChar(fb, col, row, charCode);
+    const cols = 16;
+    const rows = 2;
+    for (let address = 0; address <= 0x7f; address++) {
+      const row = this.getRowFromAddress(address);
+      const col = this.getColFromAddress(address);
+      if (row >= 0 && col >= 0 && row < rows && col < cols) {
+        const charCode = this.ddram[address];
+        this.renderChar(frameBuffer, col, row, charCode);
       }
     }
   }
 
-  private renderChar(fb: IFrameBuffer, col: number, row: number, charCode: number): void {
-    const font = this.getFont(charCode);
-    const x0 = col * 5;
-    const y0 = row * 8;
-    for (let y = 0; y < 8; y++) {
-      for (let x = 0; x < 5; x++) {
-        const on = (font[y] >> (4 - x)) & 1;
-        fb.setPixel(x0 + x, y0 + y, on ? 34 : 0, on ? 34 : 0, on ? 34 : 0, on ? 255 : 0);
+  private getRowFromAddress(address: number): number {
+    if (address >= 0x00 && address <= 0x0f) return 0;
+    if (address >= 0x40 && address <= 0x4f) return 1;
+    return -1;
+  }
+  private getColFromAddress(address: number): number {
+    if (address >= 0x00 && address <= 0x0f) return address - 0x00;
+    if (address >= 0x40 && address <= 0x4f) return address - 0x40;
+    return -1;
+  }
+
+  private renderChar(frameBuffer: IFrameBuffer, col: number, row: number, charCode: number): void {
+    const charPixels = this.getCharacterPixels(charCode);
+    const charWidth = 5;
+    const charHeight = 8;
+    const xStart = col * charWidth;
+    const yStart = row * charHeight;
+    for (let y = 0; y < charHeight; y++) {
+      for (let x = 0; x < charWidth; x++) {
+        frameBuffer.setPixel(xStart + x, yStart + y, 0, 0, 0, 0);
+      }
+    }
+    for (let y = 0; y < charHeight; y++) {
+      for (let x = 0; x < charWidth; x++) {
+        const pixelOn = (charPixels[y] >> (4 - x)) & 0x01;
+        if (pixelOn) {
+          frameBuffer.setPixel(xStart + x, yStart + y, 255, 255, 255, 255);
+        }
       }
     }
   }
 
-  // Returns a Uint8Array[8] for 5x8 font, standard ASCII 32-127
-  private getFont(charCode: number): Uint8Array {
-    // Only a subset shown for brevity; fill out as needed
+  private getCharacterPixels(charCode: number): Uint8Array {
+    // 5x8 font for ASCII 32-127, including upper/lowercase and digits
     const font: { [key: number]: Uint8Array } = {
-      0x20: new Uint8Array([0,0,0,0,0,0,0,0]), // space
-      0x41: new Uint8Array([0x0e,0x11,0x11,0x1f,0x11,0x11,0x11,0]), // A
-      0x42: new Uint8Array([0x1e,0x11,0x11,0x1e,0x11,0x11,0x1e,0]), // B
-      0x43: new Uint8Array([0x0e,0x11,0x10,0x10,0x10,0x11,0x0e,0]), // C
-      0x44: new Uint8Array([0x1e,0x11,0x11,0x11,0x11,0x11,0x1e,0]), // D
-      0x45: new Uint8Array([0x1f,0x10,0x10,0x1e,0x10,0x10,0x1f,0]), // E
-      0x46: new Uint8Array([0x1f,0x10,0x10,0x1e,0x10,0x10,0x10,0]), // F
-      0x47: new Uint8Array([0x0e,0x11,0x10,0x13,0x11,0x11,0x0e,0]), // G
-      0x48: new Uint8Array([0x11,0x11,0x11,0x1f,0x11,0x11,0x11,0]), // H
-      0x49: new Uint8Array([0x0e,0x04,0x04,0x04,0x04,0x04,0x0e,0]), // I
-      0x4a: new Uint8Array([0x1f,0x01,0x01,0x01,0x01,0x11,0x0e,0]), // J
-      0x4b: new Uint8Array([0x11,0x12,0x14,0x18,0x14,0x12,0x11,0]), // K
-      0x4c: new Uint8Array([0x10,0x10,0x10,0x10,0x10,0x10,0x1f,0]), // L
-      0x4d: new Uint8Array([0x11,0x1b,0x15,0x15,0x11,0x11,0x11,0]), // M
-      0x4e: new Uint8Array([0x11,0x19,0x15,0x13,0x11,0x11,0x11,0]), // N
-      0x4f: new Uint8Array([0x0e,0x11,0x11,0x11,0x11,0x11,0x0e,0]), // O
-      0x50: new Uint8Array([0x1e,0x11,0x11,0x1e,0x10,0x10,0x10,0]), // P
-      0x51: new Uint8Array([0x0e,0x11,0x11,0x11,0x15,0x12,0x0d,0]), // Q
-      0x52: new Uint8Array([0x1e,0x11,0x11,0x1e,0x14,0x12,0x11,0]), // R
-      0x53: new Uint8Array([0x0f,0x10,0x10,0x0e,0x01,0x01,0x1e,0]), // S
-      0x54: new Uint8Array([0x1f,0x04,0x04,0x04,0x04,0x04,0x04,0]), // T
-      0x55: new Uint8Array([0x11,0x11,0x11,0x11,0x11,0x11,0x0e,0]), // U
-      0x56: new Uint8Array([0x11,0x11,0x11,0x11,0x0a,0x0a,0x04,0]), // V
-      0x57: new Uint8Array([0x11,0x11,0x15,0x15,0x15,0x1b,0x11,0]), // W
-      0x58: new Uint8Array([0x11,0x11,0x0a,0x04,0x0a,0x11,0x11,0]), // X
-      0x59: new Uint8Array([0x11,0x11,0x0a,0x04,0x04,0x04,0x04,0]), // Y
-      0x5a: new Uint8Array([0x1f,0x01,0x02,0x04,0x08,0x10,0x1f,0]), // Z
-      0x61: new Uint8Array([0x00,0x0e,0x01,0x0f,0x11,0x11,0x0f,0]), // a
-      0x62: new Uint8Array([0x10,0x10,0x1e,0x11,0x11,0x11,0x1e,0]), // b
-      0x63: new Uint8Array([0x00,0x0f,0x10,0x10,0x10,0x10,0x0f,0]), // c
-      0x64: new Uint8Array([0x01,0x01,0x0f,0x11,0x11,0x11,0x0f,0]), // d
-      0x65: new Uint8Array([0x00,0x0e,0x11,0x1f,0x10,0x10,0x0f,0]), // e
-      0x66: new Uint8Array([0x07,0x08,0x08,0x1e,0x08,0x08,0x08,0]), // f
-      0x67: new Uint8Array([0x0f,0x11,0x11,0x11,0x0f,0x01,0x1e,0]), // g
-      0x68: new Uint8Array([0x10,0x10,0x1e,0x11,0x11,0x11,0x11,0]), // h
-      0x69: new Uint8Array([0x04,0x00,0x0c,0x04,0x04,0x04,0x0e,0]), // i
-      0x6a: new Uint8Array([0x02,0x00,0x06,0x02,0x02,0x12,0x0c,0]), // j
-      0x6b: new Uint8Array([0x10,0x10,0x12,0x14,0x18,0x14,0x12,0]), // k
-      0x6c: new Uint8Array([0x0c,0x04,0x04,0x04,0x04,0x04,0x0e,0]), // l
-      0x6d: new Uint8Array([0x00,0x1b,0x15,0x15,0x15,0x15,0x15,0]), // m
-      0x6e: new Uint8Array([0x00,0x1e,0x11,0x11,0x11,0x11,0x11,0]), // n
-      0x6f: new Uint8Array([0x00,0x0e,0x11,0x11,0x11,0x11,0x0e,0]), // o
-      0x70: new Uint8Array([0x00,0x1e,0x11,0x11,0x1e,0x10,0x10,0]), // p
-      0x71: new Uint8Array([0x00,0x0f,0x11,0x11,0x0f,0x01,0x01,0]), // q
-      0x72: new Uint8Array([0x00,0x0f,0x10,0x10,0x10,0x10,0x10,0]), // r
-      0x73: new Uint8Array([0x00,0x0f,0x10,0x0e,0x01,0x11,0x0e,0]), // s
-      0x74: new Uint8Array([0x08,0x1e,0x08,0x08,0x08,0x08,0x06,0]), // t
-      0x75: new Uint8Array([0x00,0x11,0x11,0x11,0x11,0x11,0x0e,0]), // u
-      0x76: new Uint8Array([0x00,0x11,0x11,0x11,0x0a,0x0a,0x04,0]), // v
-      0x77: new Uint8Array([0x00,0x11,0x11,0x15,0x15,0x15,0x0a,0]), // w
-      0x78: new Uint8Array([0x00,0x11,0x0a,0x04,0x04,0x0a,0x11,0]), // x
-      0x79: new Uint8Array([0x00,0x11,0x11,0x11,0x0f,0x01,0x1e,0]), // y
-      0x7a: new Uint8Array([0x00,0x1f,0x01,0x02,0x04,0x08,0x1f,0]), // z
+      0x20: new Uint8Array([0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00]), // space
+      // Digits
+      0x30: new Uint8Array([0x0e,0x11,0x13,0x15,0x19,0x11,0x0e,0x00]), // 0
+      0x31: new Uint8Array([0x04,0x0c,0x04,0x04,0x04,0x04,0x0e,0x00]), // 1
+      0x32: new Uint8Array([0x0e,0x11,0x01,0x0e,0x10,0x10,0x1f,0x00]), // 2
+      0x33: new Uint8Array([0x1f,0x01,0x02,0x06,0x01,0x11,0x0e,0x00]), // 3
+      0x34: new Uint8Array([0x02,0x06,0x0a,0x12,0x1f,0x02,0x02,0x00]), // 4
+      0x35: new Uint8Array([0x1f,0x10,0x1e,0x01,0x01,0x11,0x0e,0x00]), // 5
+      0x36: new Uint8Array([0x0e,0x10,0x1e,0x11,0x11,0x11,0x0e,0x00]), // 6
+      0x37: new Uint8Array([0x1f,0x01,0x02,0x04,0x08,0x08,0x08,0x00]), // 7
+      0x38: new Uint8Array([0x0e,0x11,0x11,0x0e,0x11,0x11,0x0e,0x00]), // 8
+      0x39: new Uint8Array([0x0e,0x11,0x11,0x0f,0x01,0x11,0x0e,0x00]), // 9
+      // Uppercase
+      0x41: new Uint8Array([0x0e,0x11,0x11,0x1f,0x11,0x11,0x11,0x00]), // A
+      0x42: new Uint8Array([0x1e,0x11,0x11,0x1e,0x11,0x11,0x1e,0x00]), // B
+      0x43: new Uint8Array([0x0e,0x11,0x10,0x10,0x10,0x11,0x0e,0x00]), // C
+      0x44: new Uint8Array([0x1e,0x11,0x11,0x11,0x11,0x11,0x1e,0x00]), // D
+      0x45: new Uint8Array([0x1f,0x10,0x10,0x1e,0x10,0x10,0x1f,0x00]), // E
+      0x46: new Uint8Array([0x1f,0x10,0x10,0x1e,0x10,0x10,0x10,0x00]), // F
+      0x47: new Uint8Array([0x0e,0x11,0x10,0x13,0x11,0x11,0x0e,0x00]), // G
+      0x48: new Uint8Array([0x11,0x11,0x11,0x1f,0x11,0x11,0x11,0x00]), // H
+      0x49: new Uint8Array([0x0e,0x04,0x04,0x04,0x04,0x04,0x0e,0x00]), // I
+      0x4a: new Uint8Array([0x1f,0x01,0x01,0x01,0x01,0x11,0x0e,0x00]), // J
+      0x4b: new Uint8Array([0x11,0x12,0x14,0x18,0x14,0x12,0x11,0x00]), // K
+      0x4c: new Uint8Array([0x10,0x10,0x10,0x10,0x10,0x10,0x1f,0x00]), // L
+      0x4d: new Uint8Array([0x11,0x1b,0x15,0x15,0x11,0x11,0x11,0x00]), // M
+      0x4e: new Uint8Array([0x11,0x19,0x15,0x13,0x11,0x11,0x11,0x00]), // N
+      0x4f: new Uint8Array([0x0e,0x11,0x11,0x11,0x11,0x11,0x0e,0x00]), // O
+      0x50: new Uint8Array([0x1e,0x11,0x11,0x1e,0x10,0x10,0x10,0x00]), // P
+      0x51: new Uint8Array([0x0e,0x11,0x11,0x11,0x15,0x12,0x0d,0x00]), // Q
+      0x52: new Uint8Array([0x1e,0x11,0x11,0x1e,0x14,0x12,0x11,0x00]), // R
+      0x53: new Uint8Array([0x0f,0x10,0x10,0x0e,0x01,0x01,0x1e,0x00]), // S
+      0x54: new Uint8Array([0x1f,0x04,0x04,0x04,0x04,0x04,0x04,0x00]), // T
+      0x55: new Uint8Array([0x11,0x11,0x11,0x11,0x11,0x11,0x0e,0x00]), // U
+      0x56: new Uint8Array([0x11,0x11,0x11,0x11,0x0a,0x0a,0x04,0x00]), // V
+      0x57: new Uint8Array([0x11,0x11,0x15,0x15,0x15,0x1b,0x11,0x00]), // W
+      0x58: new Uint8Array([0x11,0x11,0x0a,0x04,0x0a,0x11,0x11,0x00]), // X
+      0x59: new Uint8Array([0x11,0x11,0x0a,0x04,0x04,0x04,0x04,0x00]), // Y
+      0x5a: new Uint8Array([0x1f,0x01,0x02,0x04,0x08,0x10,0x1f,0x00]), // Z
+      // Lowercase
+      0x61: new Uint8Array([0x00,0x0e,0x01,0x0f,0x11,0x11,0x0f,0x00]), // a
+      0x62: new Uint8Array([0x10,0x10,0x1e,0x11,0x11,0x11,0x1e,0x00]), // b
+      0x63: new Uint8Array([0x00,0x0f,0x10,0x10,0x10,0x10,0x0f,0x00]), // c
+      0x64: new Uint8Array([0x01,0x01,0x0f,0x11,0x11,0x11,0x0f,0x00]), // d
+      0x65: new Uint8Array([0x00,0x0e,0x11,0x1f,0x10,0x10,0x0f,0x00]), // e
+      0x66: new Uint8Array([0x07,0x08,0x08,0x1e,0x08,0x08,0x08,0x00]), // f
+      0x67: new Uint8Array([0x0f,0x11,0x11,0x11,0x0f,0x01,0x1e,0x00]), // g
+      0x68: new Uint8Array([0x10,0x10,0x1e,0x11,0x11,0x11,0x11,0x00]), // h
+      0x69: new Uint8Array([0x04,0x00,0x0c,0x04,0x04,0x04,0x0e,0x00]), // i
+      0x6a: new Uint8Array([0x02,0x00,0x06,0x02,0x02,0x12,0x0c,0x00]), // j
+      0x6b: new Uint8Array([0x10,0x10,0x12,0x14,0x18,0x14,0x12,0x00]), // k
+      0x6c: new Uint8Array([0x0c,0x04,0x04,0x04,0x04,0x04,0x0e,0x00]), // l
+      0x6d: new Uint8Array([0x00,0x1b,0x15,0x15,0x15,0x15,0x15,0x00]), // m
+      0x6e: new Uint8Array([0x00,0x1e,0x11,0x11,0x11,0x11,0x11,0x00]), // n
+      0x6f: new Uint8Array([0x00,0x0e,0x11,0x11,0x11,0x11,0x0e,0x00]), // o
+      0x70: new Uint8Array([0x00,0x1e,0x11,0x11,0x1e,0x10,0x10,0x00]), // p
+      0x71: new Uint8Array([0x00,0x0f,0x11,0x11,0x0f,0x01,0x01,0x00]), // q
+      0x72: new Uint8Array([0x00,0x0f,0x10,0x10,0x10,0x10,0x10,0x00]), // r
+      0x73: new Uint8Array([0x00,0x0f,0x10,0x0e,0x01,0x11,0x0e,0x00]), // s
+      0x74: new Uint8Array([0x08,0x1e,0x08,0x08,0x08,0x08,0x06,0x00]), // t
+      0x75: new Uint8Array([0x00,0x11,0x11,0x11,0x11,0x11,0x0e,0x00]), // u
+      0x76: new Uint8Array([0x00,0x11,0x11,0x11,0x0a,0x0a,0x04,0x00]), // v
+      0x77: new Uint8Array([0x00,0x11,0x11,0x15,0x15,0x15,0x0a,0x00]), // w
+      0x78: new Uint8Array([0x00,0x11,0x0a,0x04,0x04,0x0a,0x11,0x00]), // x
+      0x79: new Uint8Array([0x00,0x11,0x11,0x11,0x0f,0x01,0x1e,0x00]), // y
+      0x7a: new Uint8Array([0x00,0x1f,0x01,0x02,0x04,0x08,0x1f,0x00]), // z
     };
-    return font[charCode] || new Uint8Array(8).fill(0);
+    return font[charCode] || new Uint8Array(8).fill(0x00);
   }
 }
 
@@ -486,45 +534,20 @@ export class SimulationComponentLogic extends AbstractSimulationComponentLogic {
 import { AbstractSimulationComponentUI, IFrameBuffer } from '@cirkit/simulation/ui';
 
 export class SimulationComponentUI extends AbstractSimulationComponentUI {
-  public rows = Array(2);
-  public cols = Array(16);
-  public pixelRows = Array(8);
-  public pixelCols = Array(5);
-
-  // Add a gap between character cells (SVG units)
-  public charGapX = 0.7; // horizontal gap between characters
-  public charGapY = 0.5; // vertical gap between rows
-
-  // Calculate the width/height of a character cell (including gap)
-  public charCellWidth = (56.2 - (15 * this.charGapX)) / 16; // 16 chars, 15 gaps
-  public charCellHeight = (11.5 - (1 * this.charGapY)) / 2;  // 2 rows, 1 gap
-
-  // Each pixel's size within a character cell
-  public xScale = this.charCellWidth / 5;
-  public yScale = this.charCellHeight / 8;
-
-  private framebuffer: IFrameBuffer | null = null;
+  framebuffer: IFrameBuffer | null = null;
 
   public init(): void {
     this.framebuffer = this.simulation.runtimeState.getFrameBuffer('lcdDisplay');
   }
 
-  public isPixelOn(col: number, row: number, px: number, py: number): boolean {
+  isPixelOn(x: number, y: number): boolean {
     if (!this.framebuffer) return false;
-    const x = col * 5 + px;
-    const y = row * 8 + py;
     const pixel = this.framebuffer.getPixel(x, y);
     return pixel.a > 0;
   }
 
-  // Calculate the X position for a pixel, including character gap
-  public getPixelX(colIdx: number, pxIdx: number): number {
-    return 12.45 + colIdx * (this.charCellWidth + this.charGapX) + pxIdx * this.xScale;
-  }
-
-  // Calculate the Y position for a pixel, including row gap
-  public getPixelY(rowIdx: number, pyIdx: number): number {
-    return 12.55 + rowIdx * (this.charCellHeight + this.charGapY) + pyIdx * this.yScale;
+  createRange(length: number): number[] {
+    return Array.from({ length }, (_, i) => i);
   }
 }
 
@@ -533,11 +556,6 @@ export class SimulationComponentUI extends AbstractSimulationComponentUI {
 ### UI Html
 
 ```html
-<!--
-16x2 I2C LCD UI Layer
-──────────────────────────────────────────────
-This overlays the LCD character grid on the SVG display area.
--->
 <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 80 36" style="font-size:1.5px;font-family:monospace" version="1.1">
   <defs>
     <pattern id="characters" width="3.55" height="5.95" patternUnits="userSpaceOnUse" x="12.45" y="12.55">
@@ -560,22 +578,16 @@ This overlays the LCD character grid on the SVG display area.
     <tspan x="2.3" y="16.6">SCL</tspan>
   </text>
   <rect x="12.45" y="12.55" width="56.2" height="11.5" fill="url(#characters)"/>
-  <!-- LCD character grid overlay -->
-  <g *ngFor="let row of component.rows; let rowIdx = index">
-    <g *ngFor="let col of component.cols; let colIdx = index">
-      <g *ngFor="let py of component.pixelRows; let pyIdx = index">
-        <g *ngFor="let px of component.pixelCols; let pxIdx = index">
-          <rect [attr.x]="component.getPixelX(colIdx, pxIdx)"
-                [attr.y]="component.getPixelY(rowIdx, pyIdx)"
-                [attr.width]="component.xScale"
-                [attr.height]="component.yScale"
-                [attr.fill]="component.isPixelOn(colIdx, rowIdx, pxIdx, pyIdx) ? '#222' : '#b6e685'"
-                [attr.opacity]="component.isPixelOn(colIdx, rowIdx, pxIdx, pyIdx) ? 1 : 0.18"/>
-        </g>
-      </g>
-    </g>
+  <g id="lcd-pixels">
+    <ng-container *ngFor="let row of component.createRange(16)">
+      <ng-container *ngFor="let col of component.createRange(80)">
+        <rect [attr.x]="12.45 + col * 0.7" [attr.y]="12.55 + row * 0.7" width="0.6" height="0.6"
+              [attr.fill]="component.isPixelOn(col, row) ? 'black' : 'rgba(0,0,0,0)'" />
+      </ng-container>
+    </ng-container>
   </g>
 </svg>
+
 
 ```
 
