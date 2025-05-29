@@ -128,7 +128,7 @@ Now that Component AI has updated the code and UI HTML, it is time to test.  Fir
 
 I then wire up the Arduino Uno to the new LCD, and add the appropriate sketch code.  Notice that I leverage Cirkit AI to write the sketch code to display "Hello World" on the LCD.
 
-One thing that AI does not catch when writing the code is the need to specify the size of the LCD in columns and rows.  That **Gotcha** can cost you a few frustrating moments of decoding.
+One thing that AI does not catch when writing the code is the need to specify the size of the LCD in columns and rows.  That **Gotcha** can cost you a few frustrating moments of debugging.
 
  
 
