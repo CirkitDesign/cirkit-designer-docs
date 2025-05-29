@@ -63,7 +63,7 @@ In this example, there is a 16x2 grid of cells that characters will be displayed
 ### Adding Simulation HTML, Script and State 
 In order to add simulation support to a component, you must first define the runtime state variables that will be modified by the simulation logic and monitored by the UI script.  When a runtime state variable is updated by the simulation logic, the UI script subscribing to changes in state variables will modify attributes in the HTML to reflect the changes in state.  In the context of an LCD, a frame buffer will be used.
 
-Rather than write all of the code and data structures for each tab of the servo emulation logic, we will leverage the built-in Component AI which is able to take an image and based on the request, create the runtime data structures needed by the UI, then write the simulation logic to identify and listen to the pin changes, and apply these changes to the runtime state.  Finally, the Component AI will write the UI script and changes to the UI html needed to reflect a change in the text displayed on the LCD.
+Rather than write all of the code and data structures for each tab of the LCD emulation logic, we will leverage the built-in Component AI which is able to take an image and based on the request, create the runtime data structures needed by the UI, then write the simulation logic to identify and listen to the pin changes, and apply these changes to the runtime state.  Finally, the Component AI will write the UI script and changes to the UI html needed to reflect a change in the text displayed on the LCD.
 
 #### Open the Component AI and request it to add the features needed for simulating the LCD
 
