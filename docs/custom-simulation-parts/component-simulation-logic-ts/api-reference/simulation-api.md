@@ -72,6 +72,16 @@ Manage dynamic connections between simulation components.
 - `updateResistor(resistor: IResistorConnection, newResistance: number): boolean`
 - `addLED(pinAnode: IPin, pinCathode: IPin, forwardVoltageThreshold?: number): ILEDConnection | null`
 - `removeLED(led: ILEDConnection): boolean`
+- `addDiode(pinAnode: IPin, pinCathode: IPin, options?: IDiodeModelOptions): IDiodeHandle | null`
+- `removeDiode(handle: IDiodeHandle): boolean`
+- `addBJT(collector: IPin, base: IPin, emitter: IPin, options?: IBjtModelOptions): IBjtHandle | null`
+- `removeBJT(handle: IBjtHandle): boolean`
+- `addMOSFET(drain: IPin, gate: IPin, source: IPin, options?: IMosfetModelOptions): IMosfetHandle | null`
+- `removeMOSFET(handle: IMosfetHandle): boolean`
+- `addVoltageSource(positivePin: IPin, referencePin: IPin, options?: IVoltageSourceOptions): IVoltageSourceHandle | null`
+- `removeVoltageSource(handle: IVoltageSourceHandle): boolean`
+- `addDCMotor(pinA: IPin, pinB: IPin, options: IDCMotorOptions): IDCMotorHandle | null`
+- `removeDCMotor(handle: IDCMotorHandle): boolean`
 
 **Example:**
 ```typescript
