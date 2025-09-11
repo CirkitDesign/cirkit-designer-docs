@@ -10,7 +10,7 @@ Join a select group of founding contributors who get exclusive access to our Com
 
 ## What is a Component Builder?
 
-Component Builders are approved community members who help expand Cirkit's library of simulatable parts. As a builder, you'll have exclusive access to our powerful Component Editor with AI assistance—the same premium tools our subscribers use.
+Component Builders are approved community members who help expand Cirkit's library of simulatable parts. As a builder, you'll have exclusive access to our powerful Component Editor with AI assistance.
 
 ## What You Get
 
