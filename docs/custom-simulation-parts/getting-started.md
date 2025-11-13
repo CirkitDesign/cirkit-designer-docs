@@ -8,6 +8,15 @@ Custom Components allow you to extend the Cirkit simulation environment to suppo
 
 Note: The current simulation environment has a digital focus with support for basic analog signals. Full support for simulating electrical currents will be introduced in a future update.
 
+## 🚀 Quick Start: Learn by Example
+
+The fastest way to get started is to watch and follow along with our tutorials:
+
+- **[📺 Video: Building Simulation Components with AI](https://www.youtube.com/watch?v=i3vKdrOKFFQ&t=36s)** - Watch the Component AI in action
+- **[Tutorial: Build a Servo Component](/tutorials/create-simulation-servo)** - Step-by-step guide with PWM control and visual rotation
+- **[Tutorial: Build a 16x2 LCD Display](/tutorials/create-simulation-lcd)** - Complete walkthrough for I2C LCD component
+- **[Component AI Power User Guide](/custom-simulation-parts/guides/ai-component-builder-cheatsheet)** - Master Cirkit's AI assistant for building components
+
 ## Component Creation Workflow
 
 Creating a custom component involves three straightforward steps:
