@@ -10,19 +10,17 @@ This is the most common cause of "agent not found" issues, especially for first-
 
 ## Fixing Permissions in Google Chrome
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/wxKkcQx9w-s?si=MOOJdos101p0po7a" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+
+<br />
+
 1. Open Chrome and navigate to [app.cirkitdesigner.com](https://app.cirkitdesigner.com)
 2. Click the **lock icon** (or tune/settings icon) in the address bar, to the left of the URL
-3. Click **Site settings**
-4. Scroll down to find any permissions that are set to **Block**
-5. Change any blocked permissions back to **Ask (default)** or **Allow**
-6. Close the Site settings tab
-7. **Reload** the Cirkit Designer page
+3. You'll see the permissions listed right there — find any that are set to **Block**
+4. Change any blocked permissions back to **Ask (default)** or **Allow**
+5. **Reload** the Cirkit Designer page
 
-If you don't see specific permissions listed, you can also reset all permissions for the site:
-
-1. In the Site settings page, click **Reset permissions**
-2. Go back to Cirkit Designer and reload the page
-3. When prompted, click **Allow** to grant the necessary permissions
+If you don't see the permission listed in the dropdown, click **Site settings** to view all permissions and reset any that are blocked.
 
 ## Fixing Permissions in Microsoft Edge
 

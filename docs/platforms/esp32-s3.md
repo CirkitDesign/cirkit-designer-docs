@@ -87,3 +87,42 @@ Most Arduino projects work well at the default 8 MHz setting. Only increase it i
 - **WiFi requires open networks** — WPA2/WPA3 encryption is not supported. Use the virtual `CirkitWifi` access point (no password)
 - **Timing may differ from real hardware** — crypto operations complete instantly, ADC conversions have no delay, and clock behavior is simplified. Most Arduino code is unaffected
 - **No Bluetooth** — if your project requires BLE or classic Bluetooth, it cannot be simulated at this time
+
+---
+
+## Example Circuits
+
+### WiFi & Networking
+
+- [Crypto Price Tracker](https://app.cirkitdesigner.com/project/e6abd77f-c55f-40f5-bdf9-b503e3135672)
+- [MQTT Temperature Monitor — Two ESP32s with Sensor and Display](https://app.cirkitdesigner.com/project/491459f8-9109-4daf-b12b-17742c0057ff)
+- [HTTPS IP Echo Test](https://app.cirkitdesigner.com/project/c81da98d-8e2d-4cb8-9be3-c7df6eb8e8f7)
+
+### Sensors
+
+- [Measuring Distance with Analog IR Sensor](https://app.cirkitdesigner.com/project/f57e6734-ca48-46a6-aca9-7dfaca641530)
+- [FSR (Force Sensor) with Curve Fitting](https://app.cirkitdesigner.com/project/bec1d64c-9299-425e-93d0-e127c6236b52)
+- [Measuring Temperature with DS18B20](https://app.cirkitdesigner.com/project/d8f5243e-c875-4d73-a17c-d77f8be5de0e)
+- [Measuring Temperature with 2 DS18B20 Devices on Same Bus](https://app.cirkitdesigner.com/project/dc68ab76-ba6e-4182-9629-c546861d9fac)
+- [Measure Temperature with DHT11](https://app.cirkitdesigner.com/project/a4a2a875-89e6-4fac-97e4-6af6418be9a4)
+- [Measuring Distance with HC-SR04 Sensor](https://app.cirkitdesigner.com/project/5de96c25-1221-47d4-89b7-b0014f29eb0d)
+- [Track Time with DS1307 RTC](https://app.cirkitdesigner.com/project/836904bf-27ba-4669-a9c0-79dc86a64eb7)
+
+### Displays
+
+- [Hello World with 16x2 LCD Display](https://app.cirkitdesigner.com/project/0ccaeef3-b081-4e83-91c6-0aaac6d13bdc)
+- [Joystick-Controlled Dot on MAX7219 LED Matrix (Bit-Banged SPI)](https://app.cirkitdesigner.com/project/5032dceb-3bc6-4fce-8ce7-d40207aaac7b)
+
+### LEDs & PWM
+
+- [Iterating Red Pixel on Chained NeoPixel Rings](https://app.cirkitdesigner.com/project/76c3abfc-b024-4d87-ad5d-6f84badf1996)
+- [Sequential LED with 74HC595 Shift Register](https://app.cirkitdesigner.com/project/44707273-332c-4393-ac1b-bed77e548b00)
+- [PWM with an RGB LED](https://app.cirkitdesigner.com/project/deabd32e-0a89-4353-8b09-c15f63882d4c)
+
+### Motors
+
+- [Two-Wheeled Bot with L298N Motor Driver](https://app.cirkitdesigner.com/project/15a7ade0-217f-4651-a15e-3e21eb11c29f)
+
+### Projects
+
+- [Hotel Safe](https://app.cirkitdesigner.com/project/b6be54fa-7669-46eb-be47-9345e9f43241)

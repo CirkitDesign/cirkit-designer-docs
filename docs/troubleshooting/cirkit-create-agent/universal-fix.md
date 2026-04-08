@@ -6,11 +6,16 @@ sidebar_position: 3
 
 If you've already checked your [browser permissions](./browser-permissions) and the Cirkit Create Agent still isn't connecting, follow this step-by-step process. This resolves the majority of agent issues, including:
 
-- Agent was working but stopped
-- Multiple failed connection attempts
-- Agent appears to be running but Cirkit Designer can't find it
+- Agent appears to be running but Cirkit Designer can't find it (continues to show "Download Agent")
+- "Scanning for devices..." but Arduino is never detected
 
 ## The Fix
+
+### Video Walkthrough (Windows)
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/2_AifXZ_JCc?si=rPnvITy8WamADv9D" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+
+<br />
 
 ### Step 1: Close All Running Instances of the Cirkit Create Agent
 
