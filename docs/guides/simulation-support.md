@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Why Can't All Parts Simulate?
 
-Cirkit Designer's parts library includes thousands of components for designing circuits. However, not all of them work with the simulator. A part can still be used in your circuit design even if it doesn't participate in simulation.
+Cirkit Designer's parts library includes thousands of components for designing circuits. However, not all of them are simulation-ready. A part can still be used in your circuit design even if it isn't simulation-ready.
 
 This page explains why, and what you can do about it.
 
@@ -14,7 +14,7 @@ This page explains why, and what you can do about it.
 
 Each component in the parts library is a separate piece of software. For a part to work in the simulator, it needs dedicated simulation code that defines how it behaves: how it responds to voltage on its pins, what signals it outputs, and how it interacts with other parts in the circuit.
 
-Writing and validating this code takes time, so simulation support is added to parts individually. Some parts have it, and some don't. A part without simulation support is still fully functional for circuit design, wiring, and documentation.
+Writing and validating this code takes time, so simulation support is added to parts individually. Some parts have it, and some don't. A part that isn't simulation-ready is still fully functional for circuit design, wiring, and documentation.
 
 ---
 
